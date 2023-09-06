@@ -7,7 +7,7 @@ exports.getPlaces = functions.https.onRequest((req, res) => {
     const latitude = req.query.latitude || 35.6895;
     const longitude = req.query.longitude || 139.6917;
     const apiKey = functions.config().googleapi.key;
-    const radius = 100; // in meters
+    const radius = 200; // in meters
 
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&key=${apiKey}`;
 
