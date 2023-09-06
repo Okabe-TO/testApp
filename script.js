@@ -1,37 +1,49 @@
 window.onload = () => {
 	const scene = document.querySelector('a-scene');
 
-	navigator.geolocation.getCurrentPosition(async function (position) {
-		try {
-			const functionUrl = `https://us-central1-test-398207.cloudfunctions.net/getPlaces?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`;
-			const response = await fetch(functionUrl);
-			const places = await response.json();
+	// 最初に現在のユーザーの位置を取得
+	return navigator.geolocation.getCurrentPosition(function (position) {
+		const functionUrl = `https://us-central1-test-398207.cloudfunctions.net/getPlaces?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`;
 
-			places.forEach((place) => {
-				const latitude = place.geometry.location.lat;
-				const longitude = place.geometry.location.lng;
+		fetch(functionUrl)
+			.then(response => response.json())
+			.then((places) => {
+				places.forEach((place) => {
+					const latitude = place.geometry.location.lat;
+					const longitude = place.geometry.location.lng;
 
-				const placeText = document.createElement('a-link');
-				placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-				placeText.setAttribute('title', place.name);
-				placeText.setAttribute('scale', '15 15 15');
+					// 場所の名前を追加
+					const placeText = document.createElement('a-link');
+					placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+					placeText.setAttribute('scale', '5 5 5'); // Changed scale to make it smaller
 
-				placeText.addEventListener('loaded', () => {
-					window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
+					// Add text with white color and black stroke
+					const textElement = document.createElement('a-text');
+					textElement.setAttribute('value', place.name);
+					textElement.setAttribute('color', 'white');
+					textElement.setAttribute('stroke-color', 'black');
+					textElement.setAttribute('stroke-width', '0.2');
+					placeText.appendChild(textElement);
+
+					placeText.addEventListener('loaded', () => {
+						window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'))
+					});
+
+					scene.appendChild(placeText);
 				});
-
-				scene.appendChild(placeText);
+			})
+			.catch((err) => {
+				console.error('Error in retrieving places', err);
+				alert('Error in retrieving places: ' + err.message);
 			});
-		} catch (err) {
-			console.error('Error:', err);
-			alert('Error: ' + err.message);
-		}
-	}, (err) => {
-		console.error('Geolocation error:', err);
-		alert('Geolocation error: ' + err.message);
-	}, {
-		enableHighAccuracy: true,
-		maximumAge: 0,
-		timeout: 27000,
-	});
+	},
+		(err) => {
+			console.error('Error in retrieving position', err);
+			alert('Error in retrieving position: ' + err.message);
+		},
+		{
+			enableHighAccuracy: true,
+			maximumAge: 0,
+			timeout: 27000,
+		});
 };
