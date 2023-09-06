@@ -9,25 +9,26 @@ window.onload = () => {
 			.then(response => response.json())
 			.then((places) => {
 				places.forEach((place) => {
-					const latitude = place.geometry.location.lat;
-					const longitude = place.geometry.location.lng;
+					const latitude = place.location.lat;
+					const longitude = place.location.lng;
+					const placeId = place.place_id;  // Google Place ID
 
 					// 場所の名前を追加
 					const placeText = document.createElement('a-link');
 					placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-					placeText.setAttribute('scale', '5 5 5'); // Changed scale to make it smaller
+					placeText.setAttribute('title', place.name);
+					placeText.setAttribute('scale', '20 20 20');  // 文字を大きくする
 
-					// Add text with white color and black stroke
-					const textElement = document.createElement('a-text');
-					textElement.setAttribute('value', place.name);
-					textElement.setAttribute('color', 'white');
-					textElement.setAttribute('stroke-color', 'black');
-					textElement.setAttribute('stroke-width', '0.2');
-					textElement.setAttribute('scale', '3 3 3');
-					placeText.appendChild(textElement);
+					// Google MapsのURLを生成
+					const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}&query_place_id=${placeId}`;
+
+					// タップしたときのイベントを追加
+					placeText.addEventListener('click', () => {
+						window.location.href = googleMapsUrl;  // Google Mapsにリダイレクト
+					});
 
 					placeText.addEventListener('loaded', () => {
-						window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'))
+						window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
 					});
 
 					scene.appendChild(placeText);
