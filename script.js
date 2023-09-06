@@ -3,6 +3,7 @@ window.onload = () => {
 
 	navigator.geolocation.getCurrentPosition(async function (position) {
 		try {
+			alert(position.coords.latitude + " : " + position.coords.longitude);
 			const functionUrl = `https://us-central1-test-398207.cloudfunctions.net/getPlaces?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`;
 			const response = await fetch(functionUrl);
 			const places = await response.json();
