@@ -15,7 +15,7 @@ window.onload = () => {
 					// 場所の名前を追加
 					const placeText = document.createElement('a-link');
 					placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-					placeText.setAttribute('scale', '5 5 5'); // Changed scale to make it smaller
+					placeText.setAttribute('scale', '5 5 5');
 
 					// Add text with white color and black stroke
 					const textElement = document.createElement('a-text');
@@ -23,7 +23,7 @@ window.onload = () => {
 					textElement.setAttribute('color', 'white');
 					textElement.setAttribute('stroke-color', 'black');
 					textElement.setAttribute('stroke-width', '0.2');
-					textElement.setAttribute('scale', '3 3 3');
+					textElement.setAttribute('scale', '5 5 5');
 					placeText.appendChild(textElement);
 
 					placeText.addEventListener('loaded', () => {
