@@ -11,24 +11,16 @@ window.onload = () => {
 				const latitude = place.geometry.location.lat;
 				const longitude = place.geometry.location.lng;
 
-				const placeEntity = document.createElement('a-entity');
-				placeEntity.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-				placeEntity.setAttribute('scale', '5 5 5');
+				const placeText = document.createElement('a-link');
+				placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+				placeText.setAttribute('title', place.name);
+				placeText.setAttribute('scale', '15 15 15');
 
-				const placeText = document.createElement('a-text');
-				placeText.setAttribute('value', place.name);
-				placeText.setAttribute('color', 'white');
-				placeText.setAttribute('stroke-color', 'black');
-				placeText.setAttribute('stroke-width', '0.2');
-				placeText.setAttribute('align', 'center');
-
-				placeEntity.appendChild(placeText);
-
-				placeEntity.addEventListener('loaded', () => {
+				placeText.addEventListener('loaded', () => {
 					window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
 				});
 
-				scene.appendChild(placeEntity);
+				scene.appendChild(placeText);
 			});
 		} catch (err) {
 			console.error('Error:', err);
