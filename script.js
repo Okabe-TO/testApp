@@ -1,33 +1,37 @@
-async function loadPlacesFromFirebase() {
-	try {
-		const response = await fetch('https://us-central1-test-398207.cloudfunctions.net/getPlaces');
-		const data = await response.json();
+window.onload = () => {
+	const scene = document.querySelector('a-scene');
 
-		if (data.length > 0) {
-			const placesContainer = document.getElementById('places-container');
-			placesContainer.innerHTML = ''; // Clear previous places
+	navigator.geolocation.getCurrentPosition(async function (position) {
+		try {
+			const functionUrl = `https://us-central1-test-398207.cloudfunctions.net/getPlaces?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`;
+			const response = await fetch(functionUrl);
+			const places = await response.json();
 
-			data.forEach((place) => {
-				const placeElement = document.createElement('div');
-				placeElement.className = 'place';
-				placeElement.innerHTML = `
-          <h2>${place.name}</h2>
-          <p>Latitude: ${place.geometry.location.lat}</p>
-          <p>Longitude: ${place.geometry.location.lng}</p>
-        `;
+			places.forEach((place) => {
+				const latitude = place.geometry.location.lat;
+				const longitude = place.geometry.location.lng;
 
-				placesContainer.appendChild(placeElement);
+				const placeText = document.createElement('a-link');
+				placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+				placeText.setAttribute('title', place.name);
+				placeText.setAttribute('scale', '15 15 15');
+
+				placeText.addEventListener('loaded', () => {
+					window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
+				});
+
+				scene.appendChild(placeText);
 			});
-		} else {
-			alert('No places found.');
+		} catch (err) {
+			console.error('Error:', err);
+			alert('Error: ' + err.message);
 		}
-	} catch (error) {
-		console.error('Error fetching places:', error);
-		alert('Error fetching places: ' + error.message);
-	}
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-	const loadPlacesButton = document.getElementById('load-places-button');
-	loadPlacesButton.addEventListener('click', loadPlacesFromFirebase);
-});
+	}, (err) => {
+		console.error('Geolocation error:', err);
+		alert('Geolocation error: ' + err.message);
+	}, {
+		enableHighAccuracy: true,
+		maximumAge: 0,
+		timeout: 27000,
+	});
+};
