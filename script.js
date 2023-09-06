@@ -23,6 +23,7 @@ window.onload = () => {
 					textElement.setAttribute('color', 'white');
 					textElement.setAttribute('stroke-color', 'black');
 					textElement.setAttribute('stroke-width', '0.2');
+					textElement.setAttribute('scale', '3 3 3');
 					placeText.appendChild(textElement);
 
 					placeText.addEventListener('loaded', () => {
