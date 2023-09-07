@@ -14,22 +14,16 @@ window.onload = () => {
 				const latitude = place.geometry.location.lat;
 				const longitude = place.geometry.location.lng;
 
-				const placeEntity = document.createElement('a-entity');  // a-entityを使用
-				placeEntity.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-				placeEntity.setAttribute('scale', '5 5 5');  // サイズを調整
+				const placeText = document.createElement('a-link');
+				placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+				placeText.setAttribute('title', place.name);
+				placeText.setAttribute('scale', '15 15 15');
 
-				const placeText = document.createElement('a-text');  // a-textを使用
-				placeText.setAttribute('value', place.name);
-				placeText.setAttribute('color', 'white');  // 文字色を白に
-				placeText.setAttribute('align', 'center');
-
-				placeEntity.appendChild(placeText);
-
-				placeEntity.addEventListener('loaded', () => {
+				placeText.addEventListener('loaded', () => {
 					window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
 				});
 
-				scene.appendChild(placeEntity);
+				scene.appendChild(placeText);
 			});
 		} catch (err) {
 			console.error('Error:', err);
