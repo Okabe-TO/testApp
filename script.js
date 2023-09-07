@@ -8,22 +8,28 @@ window.onload = () => {
 			const places = await response.json();
 
 			alert(position.coords.latitude + " : " + position.coords.longitude);
-			alert(places);
+			alert(JSON.stringify(places));  // データの確認
 
 			places.forEach((place) => {
 				const latitude = place.geometry.location.lat;
 				const longitude = place.geometry.location.lng;
 
-				const placeText = document.createElement('a-link');
-				placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-				placeText.setAttribute('title', place.name);
-				placeText.setAttribute('scale', '15 15 15');
+				const placeEntity = document.createElement('a-entity');  // a-entityを使用
+				placeEntity.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+				placeEntity.setAttribute('scale', '5 5 5');  // サイズを調整
 
-				placeText.addEventListener('loaded', () => {
+				const placeText = document.createElement('a-text');  // a-textを使用
+				placeText.setAttribute('value', place.name);
+				placeText.setAttribute('color', 'white');  // 文字色を白に
+				placeText.setAttribute('align', 'center');
+
+				placeEntity.appendChild(placeText);
+
+				placeEntity.addEventListener('loaded', () => {
 					window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
 				});
 
-				scene.appendChild(placeText);
+				scene.appendChild(placeEntity);
 			});
 		} catch (err) {
 			console.error('Error:', err);
