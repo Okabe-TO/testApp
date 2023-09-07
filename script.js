@@ -7,6 +7,9 @@ window.onload = () => {
 			const response = await fetch(functionUrl);
 			const places = await response.json();
 
+			alert(position.coords.latitude + " : " + position.coords.longitude);
+			alert(places);
+
 			places.forEach((place) => {
 				const latitude = place.geometry.location.lat;
 				const longitude = place.geometry.location.lng;
